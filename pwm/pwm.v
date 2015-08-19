@@ -1,4 +1,4 @@
-`define PWM_BITS	10
+`define PWM_BITS					10
 
 module pwm (
 	input  wire [7:0] b_addr_i ,
@@ -22,7 +22,7 @@ module pwm (
 	reg  [ 2:0] lfsr_shift    ;
 	wire        cycle_complete;
 	wire        ctl0_enable   ;
-	wire [ 3:0] ctl0_ss       ;
+	wire [ 1:0] ctl0_ss       ;
 
 	// register i/o
 	always @(posedge clk_i or negedge nrst_i) begin
@@ -35,10 +35,13 @@ module pwm (
 				case (b_addr_i)
 					'h00: begin
 						ctl0 <= b_data_i;
-						lfsr_shift <= ((3 - b_data_i[1:0]) << 1) + (3 - b_data_i[1:0]);
+						lfsr_shift <= 
+							b_data_i[1:0] == 'b11 ? 3'h1 :
+							b_data_i[1:0] == 'b10 ? 3'h3 :
+							b_data_i[1:0] == 'b01 ? 3'h5 : 3'b0;
 					end
 					'h01: begin
-						duty_cycle[`PWM_BITS - 1:8] <= b_data_i[3:0];
+						duty_cycle[`PWM_BITS - 1:8] <= b_data_i[`PWM_BITS - 8 - 1:0];
 					end
 					'h10: begin
 						duty_cycle[7:0] <= b_data_i;
@@ -81,7 +84,7 @@ module pwm (
 
 	assign b_data_o =
 		(b_addr_i == 'h00) ? ctl0 :
-		(b_addr_i == 'h01) ? { `PWM_BITS - 8 'b0, duty_cycle[`PWM_BITS - 1:8] } :
+		(b_addr_i == 'h01) ? { 6'b0, duty_cycle[`PWM_BITS - 1:8] } :
 		(b_addr_i == 'h10) ? duty_cycle[7:0] : 8'h00;
 
 	assign lfsr_shifted = lfsr >> lfsr_shift;
