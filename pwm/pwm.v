@@ -89,7 +89,7 @@ module pwm (
 
 	assign lfsr_shifted = lfsr >> lfsr_shift;
 	assign counter_next = counter + 1;
-	assign pwm_o        = counter < duty_cycle + lfsr_shifted;
+	assign pwm_o        = ctl0_enable && (counter < duty_cycle + lfsr_shifted);
 
 	assign ctl0_enable  = ctl0[7];
 	assign ctl0_ss[1:0] = ctl0[1:0];
