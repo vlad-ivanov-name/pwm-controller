@@ -25,7 +25,9 @@ module pwm_controller_top (
 		.b_addr_o  (b_addr    ),
 		.b_data_i  (b_data_r  ),
 		.b_data_o  (b_data_w  ),
-		.b_write_o (b_write   )
+		.b_write_o (b_write   ),
+		.pwm_clk_i (clk_i     ),
+		.pwm_rst_i (nrst_i    )
 	);
 
 	generate

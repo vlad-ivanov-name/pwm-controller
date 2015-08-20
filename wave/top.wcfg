@@ -46,10 +46,6 @@
    <wvobject fp_name="group12" type="group">
       <obj_property name="label">Data bus</obj_property>
       <obj_property name="DisplayName">label</obj_property>
-      <wvobject fp_name="/pwm_controller_top_test/i_pwm_controller_top/i_spi/b_event_o" type="array" db_ref_id="1">
-         <obj_property name="ElementShortName">b_event_o[1:0]</obj_property>
-         <obj_property name="ObjectShortName">b_event_o[1:0]</obj_property>
-      </wvobject>
       <wvobject fp_name="/pwm_controller_top_test/i_pwm_controller_top/i_spi/b_data_o" type="array" db_ref_id="1">
          <obj_property name="ElementShortName">b_data_o[7:0]</obj_property>
          <obj_property name="ObjectShortName">b_data_o[7:0]</obj_property>
@@ -59,6 +55,16 @@
          <obj_property name="ElementShortName">b_addr_o[7:0]</obj_property>
          <obj_property name="ObjectShortName">b_addr_o[7:0]</obj_property>
          <obj_property name="Radix">HEXRADIX</obj_property>
+      </wvobject>
+      <wvobject fp_name="/pwm_controller_top_test/i_pwm_controller_top/i_spi/b_write_o" type="logic" db_ref_id="1">
+         <obj_property name="ElementShortName">b_write_o</obj_property>
+         <obj_property name="ObjectShortName">b_write_o</obj_property>
+      </wvobject>
+      <wvobject fp_name="/pwm_controller_top_test/i_pwm_controller_top/\i_pwm_gen[0].i_pwm /i_clock_synchronizer/data_o" type="logic" db_ref_id="1">
+         <obj_property name="DisplayName">label</obj_property>
+         <obj_property name="ElementShortName">data_o</obj_property>
+         <obj_property name="ObjectShortName">data_o</obj_property>
+         <obj_property name="label">b_write_sync</obj_property>
       </wvobject>
    </wvobject>
 </wave_config>

@@ -8,7 +8,10 @@ module spi (
 	output reg  [7:0] b_addr_o  ,
 	input  wire [7:0] b_data_i  ,
 	output reg  [7:0] b_data_o  ,
-	output reg        b_write_o
+	output wire       b_write_o ,
+	// For write frag synchronization
+	input  wire       pwm_clk_i ,
+	input  wire       pwm_rst_i
 );
 
 	wire byte_transfer_finished;
@@ -19,12 +22,20 @@ module spi (
 	reg  [7:0] spi_data_out    ;
 	reg  [7:0] spi_data_in     ;
 	wire [3:0] bit_counter_next;
+	reg        b_write         ;
 
 	localparam STATE_START = 'b000;
 	localparam STATE_READ_START = 'b001;
 	localparam STATE_READ = 'b010;
 	localparam STATE_WRITE = 'b011;
 	localparam STATE_FINISHED = 'b111;
+
+	clock_synchronizer i_clock_synchronizer (
+		.clk_i(pwm_clk_i),
+		.nrst_i(pwm_rst_i),
+		.data_i(b_write),
+		.data_o(b_write_o)
+	);
 
 	always @(posedge spi_clk_i or posedge spi_ncs_i) begin : proc_main
 		if(spi_ncs_i) begin
@@ -38,7 +49,7 @@ module spi (
 						end else begin
 							state <= STATE_READ_START;
 						end
-						b_write_o <= 0;
+						b_write <= 0;
 						b_addr_o <= { spi_data_in[6:0], spi_mosi_i };
 					end
 				end
@@ -47,7 +58,7 @@ module spi (
 					if (byte_transfer_finished) begin
 						b_data_o <= { spi_data_in[6:0], spi_mosi_i };
 
-						b_write_o <= 'b1;
+						b_write <= 'b1;
 						state <= STATE_FINISHED;
 					end
 				end
