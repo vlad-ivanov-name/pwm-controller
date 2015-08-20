@@ -13,7 +13,7 @@ module pwm_controller_top (
 	wire [7:0] b_addr;
 	wire [7:0] b_data_r;
 	wire [7:0] b_data_w;
-	wire [1:0] b_event;
+	wire       b_write;
 
 	genvar instance_index;
 
@@ -25,7 +25,7 @@ module pwm_controller_top (
 		.b_addr_o  (b_addr    ),
 		.b_data_i  (b_data_r  ),
 		.b_data_o  (b_data_w  ),
-		.b_event_o (b_event   )
+		.b_write_o (b_write   )
 	);
 
 	generate
@@ -34,7 +34,7 @@ module pwm_controller_top (
 				.b_addr_i (b_addr  ),
 				.b_data_i (b_data_w),
 				.b_data_o (b_data_r),
-				.b_event_i(b_event ),
+				.b_write_i(b_write ),
 				.clk_i    (clk_i   ),
 				.nrst_i   (nrst_i  ),
 				.pwm_o    (pwm_o   )

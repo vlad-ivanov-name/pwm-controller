@@ -5,7 +5,7 @@ module pwm_test();
 	reg  [7:0] b_addr_i ;
 	reg  [7:0] b_data_i ;
 	wire [7:0] b_data_o ;
-	reg  [1:0] b_event_i;
+	reg        b_write_i;
 	reg        clk_i    ;
 	reg        nrst_i   ;
 	wire       pwm_o    ;
@@ -17,7 +17,7 @@ module pwm_test();
 		.b_addr_i (b_addr_i ),
 		.b_data_i (b_data_i ),
 		.b_data_o (b_data_o ),
-		.b_event_i(b_event_i),
+		.b_write_i(b_write_i),
 		.clk_i    (clk_i    ),
 		.nrst_i   (nrst_i   ),
 		.pwm_o    (pwm_o    )
@@ -47,11 +47,11 @@ module pwm_test();
 		begin
 			b_data_i <= data;
 			b_addr_i <= addr;
-			b_event_i <= 2'b11;
+			b_write_i <= 2'b11;
 
 			#(`CLK_CYCLE);
 
-			b_event_i <= 0;
+			b_write_i <= 0;
 
 			#(`CLK_CYCLE);
 		end
@@ -61,7 +61,7 @@ module pwm_test();
 		nrst_i <= 0;
 		b_addr_i <= 0;
 		b_data_i <= 0;
-		b_event_i <= 0;
+		b_write_i <= 0;
 
 		#(`CLK_CYCLE);
 

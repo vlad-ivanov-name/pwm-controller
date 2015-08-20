@@ -8,7 +8,7 @@ module spi (
 	output reg  [7:0] b_addr_o  ,
 	input  wire [7:0] b_data_i  ,
 	output reg  [7:0] b_data_o  ,
-	output reg  [1:0] b_event_o
+	output reg        b_write_o
 );
 
 	wire byte_transfer_finished;
@@ -26,13 +26,8 @@ module spi (
 	localparam STATE_WRITE = 'b011;
 	localparam STATE_FINISHED = 'b111;
 
-	localparam EVENT_WRITE = 'b11;
-	localparam EVENT_READ = 'b10;
-
 	always @(posedge spi_clk_i or posedge spi_ncs_i) begin : proc_main
 		if(spi_ncs_i) begin
-			b_event_o <= 0;
-
 			state <= STATE_START;
 		end else begin
 			case (state)
@@ -42,8 +37,8 @@ module spi (
 							state <= STATE_WRITE;
 						end else begin
 							state <= STATE_READ_START;
-							b_event_o <= EVENT_READ;
 						end
+						b_write_o <= 0;
 						b_addr_o <= { spi_data_in[6:0], spi_mosi_i };
 					end
 				end
@@ -52,7 +47,7 @@ module spi (
 					if (byte_transfer_finished) begin
 						b_data_o <= { spi_data_in[6:0], spi_mosi_i };
 
-						b_event_o <= EVENT_WRITE;
+						b_write_o <= 'b1;
 						state <= STATE_FINISHED;
 					end
 				end

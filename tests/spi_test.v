@@ -9,7 +9,7 @@ module spi_test();
 	wire [7:0] b_addr_o  ;
 	reg  [7:0] b_data_i  ;
 	wire [7:0] b_data_o  ;
-	wire [1:0] b_event_o ;
+	wire       b_write_o ;
 
 	spi i_spi (
 		.spi_mosi_i(spi_mosi_i),
@@ -19,7 +19,7 @@ module spi_test();
 		.b_addr_o  (b_addr_o  ),
 		.b_data_i  (b_data_i  ),
 		.b_data_o  (b_data_o  ),
-		.b_event_o (b_event_o )
+		.b_write_o (b_write_o )
 	);
 
 	task spi_write_byte;

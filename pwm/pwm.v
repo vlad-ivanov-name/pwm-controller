@@ -4,7 +4,7 @@ module pwm (
 	input  wire [7:0] b_addr_i ,
 	input  wire [7:0] b_data_i ,
 	output wire [7:0] b_data_o ,
-	input  wire [1:0] b_event_i,
+	input  wire       b_write_i,
 	input  wire       clk_i    ,
 	input  wire       nrst_i   ,
 	output wire       pwm_o
@@ -31,7 +31,7 @@ module pwm (
 			duty_cycle <= 0;
 			lfsr_shift <= 0;
 		end else begin
-			if (b_event_i[1]) begin
+			if (b_write_i) begin
 				case (b_addr_i)
 					'h00: begin
 						ctl0 <= b_data_i;
