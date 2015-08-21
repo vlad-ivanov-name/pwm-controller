@@ -43,7 +43,7 @@ module pwm (
 					'h01: begin
 						duty_cycle[`PWM_BITS - 1:8] <= b_data_i[`PWM_BITS - 8 - 1:0];
 					end
-					'h10: begin
+					'h02: begin
 						duty_cycle[7:0] <= b_data_i;
 					end
 				endcase
@@ -85,7 +85,7 @@ module pwm (
 	assign b_data_o =
 		(b_addr_i == 'h00) ? ctl0 :
 		(b_addr_i == 'h01) ? { 6'b0, duty_cycle[`PWM_BITS - 1:8] } :
-		(b_addr_i == 'h10) ? duty_cycle[7:0] : 8'h00;
+		(b_addr_i == 'h02) ? duty_cycle[7:0] : 8'h00;
 
 	assign lfsr_shifted = lfsr >> lfsr_shift;
 	assign counter_next = counter + 1;
