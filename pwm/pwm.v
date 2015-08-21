@@ -23,6 +23,7 @@ module pwm (
 	wire        cycle_complete;
 	wire        ctl0_enable   ;
 	wire [ 1:0] ctl0_ss       ;
+	wire [12:0] cycle_value   ;
 
 	// register i/o
 	always @(posedge clk_i or negedge nrst_i) begin
@@ -89,7 +90,9 @@ module pwm (
 
 	assign lfsr_shifted = lfsr >> lfsr_shift;
 	assign counter_next = counter + 1;
-	assign pwm_o        = ctl0_enable && (counter < duty_cycle + lfsr_shifted);
+	
+	assign cycle_value[12:0] = duty_cycle + lfsr_shifted;
+	assign pwm_o = ctl0_enable && (counter < cycle_value);
 
 	assign ctl0_enable  = ctl0[7];
 	assign ctl0_ss[1:0] = ctl0[1:0];
