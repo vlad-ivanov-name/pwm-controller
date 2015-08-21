@@ -1,3 +1,5 @@
+`timescale 1ns/10ps
+
 `define CLK_CYCLE			100
 `define SPI_CLK_CYCLE		2000
 `define PWM_INSTANCES		1

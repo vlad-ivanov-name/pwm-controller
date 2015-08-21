@@ -17,7 +17,6 @@ module pwm (
 	wire [12:0] counter_next  ;
 	reg  [ 7:0] lfsr          ;
 	wire        lfsr_feedback ;
-	wire        lfsr_clk      ;
 	wire [ 7:0] lfsr_shifted  ;
 	reg  [ 2:0] lfsr_shift    ;
 	wire        cycle_complete;
@@ -52,6 +51,24 @@ module pwm (
 		end
 	end
 
+	// lfsr
+	always @(posedge clk_i or negedge nrst_i) begin
+		if(~nrst_i) begin
+			lfsr <= 8'hFF;
+		end else begin
+			if ((ctl0_ss != 0) & cycle_complete) begin 
+				lfsr[0] <= lfsr_feedback;
+				lfsr[1] <= lfsr[0];
+				lfsr[2] <= lfsr[1] ^ lfsr_feedback;
+				lfsr[3] <= lfsr[2] ^ lfsr_feedback;
+				lfsr[4] <= lfsr[3] ^ lfsr_feedback;
+				lfsr[5] <= lfsr[4];
+				lfsr[6] <= lfsr[5];
+				lfsr[7] <= lfsr[6];
+			end
+		end
+	end
+
 	// pwm output
 	always @(posedge clk_i or negedge nrst_i) begin
 		if(~nrst_i) begin
@@ -63,25 +80,8 @@ module pwm (
 		end
 	end
 
-	// lfsr
-	always @(posedge lfsr_clk or negedge nrst_i) begin
-		if(~nrst_i) begin
-			lfsr <= 8'hFF;
-		end else begin
-			lfsr[0] <= lfsr_feedback;
-			lfsr[1] <= lfsr[0];
-			lfsr[2] <= lfsr[1] ^ lfsr_feedback;
-			lfsr[3] <= lfsr[2] ^ lfsr_feedback;
-			lfsr[4] <= lfsr[3] ^ lfsr_feedback;
-			lfsr[5] <= lfsr[4];
-			lfsr[6] <= lfsr[5];
-			lfsr[7] <= lfsr[6];
-		end
-	end
-
 	assign lfsr_feedback  = lfsr[7];
 	assign cycle_complete = counter == ('b1 << `PWM_BITS) - 1;
-	assign lfsr_clk       = clk_i & (ctl0_ss != 0) & cycle_complete;
 
 	assign b_data_o =
 		(b_addr_i == 'h00) ? ctl0 :
