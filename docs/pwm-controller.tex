@@ -1,0 +1,111 @@
+\documentclass[12pt,a4paper]{article}
+
+\renewcommand*{\familydefault}{\sfdefault}
+
+\usepackage{tikz-timing}
+\usetikztiminglibrary{nicetabs}
+
+\newcommand{\timingfont}{\fontsize{10pt}{14pt}\selectfont }
+\newcommand{\timinglabeloffset}{-.25}
+
+\makeatletter
+\long\def\tikztimingtable@row@@#1#2{%
+  \addtocounter{tikztiming@nrows}{1}%
+  \coordinate (@last row) at ($ (@last row) - (0,\tikztiming@rowdist) $);
+  \node [anchor=base east,timing/name,alias=last label] (label\the\c@tikztiming@nrows)
+    at ($ (@last row) - (\tikztiming@coldist,\timinglabeloffset) $) {\ignorespaces \timingfont #1\unskip\strut};
+  \path let \p1 = (timing@table@bottom left), \p2 = (last label.south west) in
+    coordinate (timing@table@bottom left) at ({min(\x1,\x2)},\y2);
+  %
+  \@ifnextchar{[}%
+    {\tikztiming@tabletiming}%
+    {\tikztiming@tabletiming[]}%
+  #2\relax
+  \path let \p1 = (timing@table@bottom right), \p2 = (timing/end base) in
+    coordinate (timing@table@bottom right) at ({max(\x1,\x2)},\y2);
+  %
+  \pgfmathparse{max(\tikztiming@maxwidth,\tikztimingwidth)}%
+  \let\tikztiming@maxwidth\pgfmathresult
+  \tikztimingtable@checkrow
+}
+\makeatother
+
+\tikzset{
+	timing/yunit = 14pt,
+	timing/rowdist = 20pt,
+	timing/wscale = 2,
+	timing/slope = .25,
+	timing/d/text/.append style = {font=\Large}
+}
+
+\usepackage{longtable}
+\usepackage{tabu}
+\renewcommand\arraystretch{1.5}
+\tabulinesep=1.5mm
+
+\begin{document}
+
+\section{Introduction}
+
+\section{Control interface}
+
+The device is meant to be controller via SPI control interface. Each SPI transaction consists of two bytes: a command byte and a data byte.
+
+\begin{figure}[h]
+\centering
+\begin{tikztimingtable}
+MISO & 2{u}16{l}16{d}2{u} \\
+MOSI & 2{u}16{d}{Command}16{d}2{u} \\
+CLK  & 2{u}16{lh}2{u} \\
+SS   & 2{h}32{l}2{h} \\
+\end{tikztimingtable}
+\caption{Generic SPI transaction}
+\end{figure}
+
+\begin{figure}[h]
+\centering
+\begin{tikztimingtable}
+MISO & 2{u}16{l}16{d}{Readback}2{u} \\
+MOSI & 2{u}2{h}14{d}{Read command}16{h}2{u} \\
+CLK  & 2{u}16{lh}2{u} \\
+SS   & 2{h}32{l}2{h} \\
+\end{tikztimingtable}
+\caption{SPI read diagram}
+\end{figure}
+
+\begin{figure}[h]
+\centering
+\begin{tikztimingtable}
+MISO & 2{u}16{l}16{u}2{u} \\
+MOSI & 2{u}2{l}14{d}{Write command}16{d}{Data}2{u} \\
+CLK  & 2{u}16{lh}2{u} \\
+SS   & 2{h}32{l}2{h} \\
+\end{tikztimingtable}
+\caption{SPI write diagram}
+\end{figure}
+
+\begin{figure}[h]
+\centering
+\begin{tikztimingtable}[timing/wscale=4]
+MOSI & 2{u}2{d}{R/W}10{d}{Channel}4{d}{Reg}d \\
+CLK  & 2{u}8{lh}l \\
+SS   & 2{h}16{l}l \\
+\end{tikztimingtable}
+\caption{Command structure}
+\end{figure}
+
+\begin{longtabu} to \textwidth {|X[1]|X[5]|}
+\hline
+\textbf{Field} & \textbf{Description} \\
+\endfirsthead
+\hline
+\texttt{RW[7]} & Read/write. Set to 1 when performing a read transaction. \\
+\hline
+\texttt{CH[6:2]} & Channel. Refers to instance of \texttt{pwm} module within the top-level architecture. \\
+\hline
+\texttt{ADDR[1:0]} & Target register address. \\
+\hline
+\caption{Command structure}
+\end{longtabu}
+
+\end{document}
