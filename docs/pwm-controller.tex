@@ -2,6 +2,8 @@
 
 \renewcommand*{\familydefault}{\sfdefault}
 
+% Timing diagrams
+
 \usepackage{tikz-timing}
 \usetikztiminglibrary{nicetabs}
 
@@ -38,14 +40,74 @@
 	timing/d/text/.append style = {font=\Large}
 }
 
+% Tables
+
 \usepackage{longtable}
 \usepackage{tabu}
 \renewcommand\arraystretch{1.5}
 \tabulinesep=1.5mm
 
+% Heirarchy diagram
+
+\newcommand{\treepadding}{-1pt}
+\newcommand{\treemargin}{-2pt}
+
+\usepackage{forest}
+\usetikzlibrary{arrows.meta}
+\forestset{
+	subtreealign/.style={
+		for parent/.wrap pgfmath arg={calign=child,calign primary child=##1}{n}
+	},
+	dir tree/.style={
+		for tree={
+			parent anchor=south west,
+			child anchor=west,
+			anchor=mid west,
+			grow'=0,
+			align=left,
+			inner ysep=\treepadding,
+			outer ysep=\treemargin,
+			edge path={
+				\noexpand\path [draw, \forestoption{edge}] (!u.parent anchor) ++(1em,\treemargin) |- (.child anchor)\forestoption{edge label};
+			},
+			if n children=0{}{
+				delay={
+					prepend={[,phantom, subtreealign]}
+				}
+			},
+			fit=rectangle,
+			before computing xy={
+				l=2em
+			},
+			s=2pt
+		}
+	},
+	moduletop/.style={
+		fill=black!20,
+		draw=black
+	},
+	module/.style={
+		draw=black		
+	}
+}
+
 \begin{document}
 
 \section{Introduction}
+
+\begin{forest}
+  dir tree
+  [vendor-specific top module, {moduletop}
+    [pwm\_controller\_top, {module}]
+    [spi, {module} 
+      [clock\_synchronizer, {module}]
+    ]
+    [pwm\_i\_0, {module}]
+    [pwm\_i\_1, {module}]
+    [..., {module}]
+    [pwm\_i\_n, {module}]
+  ]
+\end{forest}
 
 \section{Control interface}
 
