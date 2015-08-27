@@ -104,6 +104,10 @@
 
 \usepackage{needspace}
 
+% plots
+
+\usepackage{pgfplots}
+
 \begin{document}
 
 \section{Introduction}
@@ -293,5 +297,108 @@ R/W & \multicolumn{8}{c|}{RW} \\
 \hline
 ~ & 7 & 6 & 5 & 4 & 3 & 2 & 1 & 0 \\
 \end{regtable}
+
+\section{PWM spectrum}
+
+The following table describes possible PWM duty cycle parameters.
+
+\begin{longtabu} to \textwidth {|X[1]|X[1]|X[1]|X[1]|}
+\hline
+Control.DEV bits & 
+\multicolumn{2}{c|}{Max. duty cycle deviation (\%, cycles)} &
+Average duty cycle length, cycles \\
+\endfirsthead
+\hline
+00 & 0\% & 0 & 255 \\
+\hline
+01 & 1\% & 7 & 258 \\
+\hline
+10 & 3\% & 31 & 270 \\
+\hline
+11 & 12\% & 127 & 318 \\
+\hline
+\caption{PWM duty cycle characteristics}
+\end{longtabu}
+
+\begin{figure}
+\newcommand{\plotsize}{6.5cm}
+\newcommand{\hspaceadjust}{-1cm}
+\begin{tabu} to \textwidth {X[c]X[c]}
+\hspace{\hspaceadjust}
+\begin{tikzpicture}
+\begin{axis}[
+	ymin = 0,
+	xlabel = Duty cycle length\,/\,clock cycles,
+	ylabel = Count of cycles\,/\,per 3000,
+	width = \plotsize,
+	height = \plotsize
+]
+\addplot[
+	color = black,
+	mark = none
+] coordinates {
+	(255, 104)(260, 116)(265, 117)(270, 118)
+	(275, 119)(280, 119)(285, 116)(290, 116)
+	(295, 119)(300, 114)(305, 115)(310, 118)
+	(315, 118)(320, 119)(325, 118)(330, 117)
+	(335, 120)(340, 119)(345, 117)(350, 120)
+	(355, 118)(360, 117)(365, 118)(370, 118)
+	(375, 119)
+};
+\end{axis}
+\end{tikzpicture}
+& 
+\begin{tikzpicture}
+\begin{axis}[
+	ymin = 0,
+	xlabel = Duty cycle length\,/\,clock cycles,
+	width = \plotsize,
+	height = \plotsize
+]
+\addplot[
+	color = black,
+	mark = none
+] coordinates {
+	(255, 80)(256, 95)(257, 92)(258, 93)
+	(259, 95)(260, 95)(261, 95)(262, 95)
+	(263, 91)(264, 94)(265, 95)(266, 92)
+	(267, 92)(268, 93)(269, 94)(270, 95)
+	(271, 95)(272, 94)(273, 95)(274, 93)
+	(275, 96)(276, 96)(277, 93)(278, 95)
+	(279, 96)(280, 95)(281, 94)(282, 92)
+	(283, 96)(284, 94)(285, 96)(286, 93)
+};
+\end{axis}
+\end{tikzpicture}
+\\
+a) DEV = 11 & b) DEV = 10 \\
+\multicolumn{2}{c}{
+\hspace{\hspaceadjust}
+\begin{tikzpicture}
+\begin{axis}[
+	ymin = 0,
+	xlabel = Duty cycle length\,/\,clock cycles,
+	ylabel = Count of cycles\,/\,per 3000,
+	width = \plotsize,
+	height = \plotsize
+]
+\addplot[
+	color = black,
+	mark = none
+] coordinates {
+	(255, 360)(256, 380)
+	(257, 372)(258, 374)
+	(259, 377)(260, 380)
+	(261, 377)(262, 379)
+};
+\end{axis}
+\end{tikzpicture}
+} \\
+\multicolumn{2}{c}{
+c) DEV = 01
+} \\
+\end{tabu}
+\caption{Duty cycle length distribution}
+\end{figure}
 
 \end{document}
